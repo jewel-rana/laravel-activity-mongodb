@@ -1,0 +1,21 @@
+{
+    "name": "rajtika/mongovity",
+    "description": "Application activity log with mongodb",
+    "type": "library",
+    "require": {
+        "jenssegers/mongodb": "^3.8"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Rajtika\\Mongovity\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jewel Rana",
+            "email": "jewelrana.dev@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}

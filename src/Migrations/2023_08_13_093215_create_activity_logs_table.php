@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Rajtika\Mongovity\Constants\Mongovity;
 
 class CreateActivityLogsTable extends Migration
 {
@@ -11,12 +11,17 @@ class CreateActivityLogsTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('activity_logs', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        Schema::connection(config('mongovity.connection_name', 'mongodb'))
+            ->create('activity_logs', function ($collection) {
+                $collection->index('causer_id');
+                $collection->index('causer_type');
+                $collection->index('subject_id');
+                $collection->index('subject_type');
+                $collection->index('message');
+                $collection->json('data');
+            });
     }
 
     /**
@@ -24,8 +29,9 @@ class CreateActivityLogsTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('activity_logs');
+        Schema::connection(config(Mongovity::NAMESPACE . '.connection_name', 'mongodb'))
+            ->dropIfExists('activity_logs');
     }
 }

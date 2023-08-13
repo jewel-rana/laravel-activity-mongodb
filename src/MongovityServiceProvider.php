@@ -27,6 +27,9 @@ class MongovityServiceProvider extends ServiceProvider
 
         //Load Views
         $this->loadViewsFrom(__DIR__.'/Resources/views', Constants\Mongovity::NAMESPACE);
+
+        //Load Migrations
+        $this->loadMigrationsFrom(__DIR__ . '/Migrations');
     }
 
     /**

@@ -13,11 +13,11 @@ class Mongovity
 {
     use Macroable;
 
-    private Model $model;
+    private ?Model $model = null;
     private ?string $event = null;
     private AuthManager $auth;
     private array $attributes = [];
-    private Model $causedBy;
+    private ?Model $causedBy = null;
 
     public function __construct(AuthManager $auth)
     {
@@ -68,7 +68,7 @@ class Mongovity
             'causer_id' => $this->getCauserId(),
             'causer_type' => $this->getCauserType(),
             'subject_id' => $this->model->id ?? null,
-            'subject_type' => get_class($this->model) ?? null,
+            'subject_type' => $this->model ? get_class($this->model) : null,
             'message' => $message ?? $this->getDefaultMessage(),
             'data' => $this->getAttr()
         ];
@@ -81,7 +81,7 @@ class Mongovity
 
     private function getCauserType(): ?string
     {
-        return get_class($this->causedBy) ?? get_class($this->auth) ?? null;
+        return $this->causedBy ? get_class($this->causedBy) : null;
     }
 
     private function getDefaultMessage()
@@ -93,11 +93,7 @@ class Mongovity
     {
         $attr = [];
         if($this->event) {
-            if(property_exists($this->model, 'shouldLogDirty') && $this->model->shouldLogDirty) {
-                $attr['attributes'] = $this->model->getDirty() ?? [];
-            } else {
-                $attr['attributes'] = $this->model->getRawOriginal();
-            }
+            $attr['attributes'] = $this->model->getAttributes() ?? $this->model->getDirty();
             if($this->event === 'updated') {
                 $attr['changes'] = $this->model->getChanges();
             }

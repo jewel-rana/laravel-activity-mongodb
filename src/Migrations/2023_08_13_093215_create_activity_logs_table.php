@@ -15,12 +15,15 @@ class CreateActivityLogsTable extends Migration
     {
         Schema::connection(config('mongovity.connection_name', 'mongodb'))
             ->create('activity_logs', function ($collection) {
-                $collection->index('causer_id');
-                $collection->index('causer_type');
-                $collection->index('subject_id');
-                $collection->index('subject_type');
-                $collection->index('message');
+                $collection->index('causer_id')->comment('Occurrence by');
+                $collection->string('causer_type');
+                $collection->string('causer_name');
+                $collection->index('causer_mobile');
+                $collection->index('subject_id')->comment('Modify on');
+                $collection->string('subject_type');
+                $collection->text('message');
                 $collection->json('data');
+                $collection->index('log_name')->default('default')->comment('Application / log name');
             });
     }
 

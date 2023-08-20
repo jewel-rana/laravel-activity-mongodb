@@ -7,6 +7,9 @@
     },
     "license": "MIT",
     "autoload": {
+        "files": [
+            "src/Helper/Activity.php"
+        ],
         "psr-4": {
             "Rajtika\\Mongovity\\": "src/"
         }

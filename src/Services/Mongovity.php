@@ -24,30 +24,30 @@ class Mongovity
         $this->auth = $auth;
     }
 
-    public function test(): array
+    public function get($limit = 15): array
     {
-        return ActivityLog::all()->toArray();
+        return ActivityLog::latest()->paginate($limit)->toArray();
     }
 
-    public function by(Model $causedBy): static
+    public function by(Model $causedBy): Mongovity
     {
         $this->causedBy = $causedBy;
         return $this;
     }
 
-    public function on(Model $performedOn): static
+    public function on(Model $performedOn): Mongovity
     {
         $this->model = $performedOn;
         return $this;
     }
 
-    public function event($eventName = null): static
+    public function event($eventName = null): Mongovity
     {
         $this->event = $eventName;
         return $this;
     }
 
-    public function attr(array $attributes = []): static
+    public function attr(array $attributes = []): Mongovity
     {
         $this->attributes = $attributes;
         return $this;
@@ -67,6 +67,8 @@ class Mongovity
         return [
             'causer_id' => $this->getCauserId(),
             'causer_type' => $this->getCauserType(),
+            'causer_name' => $this->causedBy->name ?? null,
+            'causer_mobile' => $this->causedBy->mobile ?? null,
             'subject_id' => $this->model->id ?? null,
             'subject_type' => $this->model ? get_class($this->model) : null,
             'message' => $message ?? $this->getDefaultMessage(),

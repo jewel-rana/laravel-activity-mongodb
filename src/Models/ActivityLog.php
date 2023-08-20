@@ -8,5 +8,9 @@ class ActivityLog extends Model
 {
     protected $connection = 'mongodb';
     protected $collection = 'activity_logs';
-    protected $fillable = ['causer_id', 'causer_type', 'subject_id', 'subject_type', 'message', 'data'];
+    protected $fillable = ['causer_id', 'causer_type', 'causer_name', 'causer_mobile', 'subject_id', 'subject_type', 'message', 'data'];
+
+    protected $casts = [
+        'created_at' => 'datetime'
+    ];
 }

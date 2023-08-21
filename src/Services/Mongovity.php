@@ -4,6 +4,7 @@ namespace Rajtika\Mongovity\Services;
 
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Traits\Macroable;
 use Rajtika\Mongovity\Models\ActivityLog;
@@ -96,13 +97,30 @@ class Mongovity
     {
         $attr = [];
         if($this->event) {
-            $attr['attributes'] = $this->model->getAttributes() ?? $this->model->getDirty();
+            $attr['attributes'] = Arr::except(
+                Arr::only(
+                    $this->model->getAttributes() ?? $this->model->getDirty(),
+                    $this->model->fillable ?? []
+                ),
+                $this->excepts()
+            );
             if($this->event === 'updated') {
-                $attr['changes'] = $this->model->getChanges();
+                $attr['changes'] = Arr::except($this->model->getChanges(), $this->excepts());
             }
         } else {
             $attr['custom'] = $this->attributes;
         }
         return $attr;
+    }
+
+    private function excepts(): array
+    {
+        return [
+            'id',
+            'password',
+            'created_at',
+            'updated_at',
+            'deleted_at'
+        ] + $this->model->excludedFields ?? [];
     }
 }

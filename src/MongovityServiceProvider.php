@@ -30,6 +30,11 @@ class MongovityServiceProvider extends ServiceProvider
 
         //Load Migrations
         $this->loadMigrationsFrom(__DIR__ . '/Migrations');
+
+        //publishes migration
+        $this->publishes([
+            __DIR__.'/Migrations/' => database_path('migrations')
+        ], 'migrations');
     }
 
     /**

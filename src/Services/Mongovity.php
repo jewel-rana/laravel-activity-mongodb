@@ -100,7 +100,7 @@ class Mongovity
             $attr['attributes'] = Arr::except(
                 Arr::only(
                     $this->model->getAttributes() ?? $this->model->getDirty(),
-                    $this->model->fillable ?? []
+                    $this->model->getFillable() ?? []
                 ),
                 $this->excepts()
             );
@@ -116,11 +116,10 @@ class Mongovity
     private function excepts(): array
     {
         return [
-            'id',
             'password',
             'created_at',
             'updated_at',
             'deleted_at'
-        ] + $this->model->excludedFields ?? [];
+        ] + (array) $this->model->excludedFields ?? [];
     }
 }

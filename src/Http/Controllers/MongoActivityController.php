@@ -12,8 +12,7 @@ class MongoActivityController extends Controller
 {
     public function index(Request $request): View
     {
-        $activities = ActivityLog::all();
-        dd($activities);
+        $activities = \Rajtika\Mongovity\Services\Mongovity::get();
         return view(Mongovity::NAMESPACE . '::index', compact('activities'));
     }
 }

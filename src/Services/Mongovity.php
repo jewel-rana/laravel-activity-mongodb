@@ -72,7 +72,8 @@ class Mongovity
             'subject_id' => $this->model->id ?? null,
             'subject_type' => $this->model ? get_class($this->model) : null,
             'message' => $message ?? $this->getDefaultMessage(),
-            'data' => $this->getAttr()
+            'data' => $this->getAttr(),
+            'log_name' => config('mongovity.log_name')
         ];
     }
 

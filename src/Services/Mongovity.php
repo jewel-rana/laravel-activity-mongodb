@@ -4,9 +4,11 @@ namespace Rajtika\Mongovity\Services;
 
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Traits\Macroable;
+use Jenssegers\Mongodb\Collection;
 use Rajtika\Mongovity\Models\ActivityLog;
 use ReflectionClass;
 
@@ -25,9 +27,9 @@ class Mongovity
         $this->auth = $auth;
     }
 
-    public function get($limit = 15): array
+    public function get($limit = 15): LengthAwarePaginator
     {
-        return ActivityLog::latest()->paginate($limit)->toArray();
+        return ActivityLog::latest()->paginate($limit);
     }
 
     public function by(Model $causedBy): Mongovity

@@ -11,7 +11,7 @@ class ActivityLog extends Model
     protected $fillable = ['causer_id', 'causer_type', 'causer_name', 'causer_mobile', 'subject_id', 'subject_type', 'message', 'data', 'log_name'];
 
     protected $casts = [
-        'created_at' => 'datetime'
+        'created_at' => 'datetime:Y-m-d H:i:s'
     ];
 
     public static function boot()

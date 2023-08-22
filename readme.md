@@ -11,7 +11,7 @@
 
 ## Implementation
 - set your mongodb connection and give connection name in the mongovity.php config file
-  - If you want to log all model activity automatically follow the instructions below
+- If you want to log all model activity automatically follow the instructions below
 ```php
 //Add ActivityTrait in you model which you want to log
 use Rajtika\Mongovity\Contracts\ActivityTrait;
@@ -32,4 +32,16 @@ use Rajtika\Mongovity\Services\Mongovity;
     ->on(TestModel::find(1)) // optional
     ->event('created') // optional
     ->log('Your custom message');
+
+//If your user table has first_name and last_name you have to use this method to log the user name
+public function getNameAttribute()
+{
+    return $this->first_name . ' ' . $this->last_name;
+}
+
+//If your user table has column other than "mobile" you need to add this method
+public function getMobileAttribute()
+{
+    return $this->mobile_number;
+}
 ```

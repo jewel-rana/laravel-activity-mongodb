@@ -6,8 +6,8 @@
 - php7.4 or higher
 
 ## Installation
-composer require rajtika/mongovity
-php artisan vendor:publish --provider="Rajtika\Mongovity\MongovityServiceProvider"
+- composer require rajtika/mongovity
+- php artisan vendor:publish --provider="Rajtika\Mongovity\MongovityServiceProvider"
 
 ## Implementation
 - set your mongodb connection and give connection name in the mongovity.php config file

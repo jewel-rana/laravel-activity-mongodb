@@ -6,18 +6,30 @@
 - php7.4 or higher
 
 ## Installation
-- composer require rajtika/mongovity
-- php artisan vendor:publish --provider="Rajtika\Mongovity\MongovityServiceProvider"
+composer require rajtika/mongovity
+php artisan vendor:publish --provider="Rajtika\Mongovity\MongovityServiceProvider"
 
 ## Implementation
 - set your mongodb connection and give connection name in the mongovity.php config file
   - If you want to log all model activity automatically follow the instructions below
-    - Use ActivityTrait in your model
-    - You can define model events to be logged
-    - public $recordEvents = ['created', 'updated', 'deleted', 'restored']; // these are default events to be recorded
-    - For custom log
+```php
+//Add ActivityTrait in you model which you want to log
+use Rajtika\Mongovity\Contracts\ActivityTrait;
+
+//You can define specefic events to be logged by
+protected $recordEvents = [
+    'created',
+    'updated',
+    'deleted',
+    'restored'
+];
+
+//If you want to save your custom activity log
+use Rajtika\Mongovity\Services\Mongovity;
+
     app(Mongovity::class)
-    ->by(Model object who caused) //Required
-    ->on(Model Object which caused) // optional
-    ->event('deleted') // optional
+    ->by(Auth::user()) //Required *
+    ->on(TestModel::find(1)) // optional
+    ->event('created') // optional
     ->log('Your custom message');
+```

@@ -6,9 +6,9 @@ use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Traits\Macroable;
-use Jenssegers\Mongodb\Collection;
 use Rajtika\Mongovity\Models\ActivityLog;
 use ReflectionClass;
 
@@ -21,6 +21,7 @@ class Mongovity
     private AuthManager $auth;
     private array $attributes = [];
     private ?Model $causedBy = null;
+    private ?string $ip;
 
     public function __construct(AuthManager $auth)
     {
@@ -29,7 +30,11 @@ class Mongovity
 
     public function get($limit = 15): LengthAwarePaginator
     {
-        return ActivityLog::latest()->paginate($limit);
+        return App::make(ActivityLog::class, [
+            'collection_name' => config('mongovity.collection_name', 'activity_logs'),
+            'connection' => config('mongovity.connection_name', 'mongodb')
+        ])
+            ->latest()->paginate($limit);
     }
 
     public function by(Model $causedBy): Mongovity
@@ -56,10 +61,20 @@ class Mongovity
         return $this;
     }
 
+    public function ip(string $ip): Mongovity
+    {
+        $this->ip = $ip;
+        return $this;
+    }
+
     public function log($message = null): void
     {
         try {
-            ActivityLog::create($this->getData($message));
+            App::make(ActivityLog::class, [
+                'collection_name' => config('mongovity.collection_name', 'activity_logs'),
+                'connection' => config('mongovity.connection_name', 'mongodb')
+            ])
+                ->create($this->getData($message));
         } catch (\Exception $exception) {
             Log::info($exception->getMessage());
         }
@@ -76,7 +91,8 @@ class Mongovity
             'subject_type' => $this->model ? get_class($this->model) : null,
             'message' => $message ?? $this->getDefaultMessage(),
             'data' => $this->getAttr(),
-            'log_name' => config('mongovity.log_name')
+            'log_name' => config('mongovity.log_name'),
+            'ip' => $this->ip ?? request()->ip()
         ];
     }
 
@@ -107,6 +123,13 @@ class Mongovity
                 $this->excepts()
             );
             if($this->event === 'updated') {
+                $attr['attributes'] = Arr::except(
+                    Arr::only(
+                        $this->model->getRawOriginal(),
+                        $this->model->getFillable() ?? []
+                    ),
+                    $this->excepts()
+                );
                 $attr['changes'] = Arr::except($this->model->getChanges(), $this->excepts());
             }
         } else {

@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Facade;
 class Mongovity extends Facade
 {
     /**
-     * @method static \Rajtika\Mongovity\Services\Mongovity test()
-     *
+     * @method static \Rajtika\Mongovity\Services\Mongovity by()
      * @return string
+     * @method static \Rajtika\Mongovity\Services\Mongovity get()
      */
     protected static function getFacadeAccessor(): string
     {

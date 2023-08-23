@@ -26,6 +26,7 @@
             <td>Causer Name</td>
             <td>Causer Mobile</td>
             <td>Message</td>
+            <td>IP</td>
             <td>Action</td>
         </tr>
         </thead>
@@ -74,6 +75,7 @@
             {data: "causer_name", orderable: false},
             {data: "causer_mobile", orderable: false},
             {data: "message", orderable: false},
+            {data: "ip", orderable: false},
             {
                 "mRender": function (data, type, row) {
                     return "<button class='btn btn-xs btn-info activity' data-id='" + row['_id'] + "' data-attr='" + JSON.stringify(row['data']) + "'>View</button>"

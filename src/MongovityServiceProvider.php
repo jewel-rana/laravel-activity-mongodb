@@ -35,6 +35,14 @@ class MongovityServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/Migrations/' => database_path('migrations')
         ], 'migrations');
+
+        $this->publishes([
+            __DIR__ . '/Config/config.php' => config_path(Mongovity::NAMESPACE . '.php'),
+        ], 'config');
+
+        $this->publishes([
+            __DIR__ . '/Resources/views' => 'resources/views/' . Mongovity::NAMESPACE,
+        ], 'views');
     }
 
     /**
@@ -44,8 +52,6 @@ class MongovityServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->publishes([
-            __DIR__ . '/Config/config.php' => config_path(Mongovity::NAMESPACE . '.php'),
-        ], 'config');
+
     }
 }

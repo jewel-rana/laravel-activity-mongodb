@@ -63,8 +63,16 @@
 <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
 <script>
+    let url = "{{ route('mongovity') }}";
     let table = new DataTable('#dataTable', {
-        ajax: "{{ route('mongovity') }}",
+        ajax: {
+            'url': url,
+            pages: 5, // number of pages to cache
+            'data': function (data) {
+                // Read values
+                data.date_from = "2023-08-29";
+            }
+        },
         processing: true,
         serverSide: true,
         "pageLength": 10,

@@ -3,6 +3,7 @@
 namespace Rajtika\Mongovity\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Rajtika\Mongovity\Constants\Mongovity;
 use Rajtika\Mongovity\Models\ActivityLog;
@@ -11,21 +12,31 @@ class MongoActivityController extends Controller
 {
     public function index(Request $request)
     {
-        if($request->wantsJson() && $request->acceptsJson()) {
+        if ($request->wantsJson() && $request->acceptsJson()) {
             $limit = $request->input('length');
             $start = $request->input('start');
             $columns = $request->get('columns');
             $column = $columns[$request->input('order.0.column')]['data'];
             $order = $request->input('order.0.dir');
-            $query = ActivityLog::query();
             $keyword = $request->input('search.value');
-            if($keyword) {
-                $query->where('causer_id', $keyword);
-                $query->orWhere(function($query) use ($keyword) {
-                    $query->where('causer_mobile', 'like', "%$keyword%");
-                    $query->where('causer_name', 'like', "%$keyword%");
-                });
+            $query = ActivityLog::query();
+            if ($keyword) {
+                $query->where('causer_id', '=', (int)$keyword);
+                if (strpos($keyword, '.')) {
+                    $query->orWhere('ip', 'like', "$keyword%");
+                } elseif (strlen($keyword) >= 5) {
+                    $query->orWhere('causer_mobile', 'like', "$keyword%");
+                }
             }
+
+            $startDate = $request->input('date_from') ?? now()->format('Y-m-d');
+            $endDate = $request->input('date_to') ?? now()->format('Y-m-d');
+
+            $query->whereBetween(
+                'created_at', array(
+                Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay(),
+                Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay()
+            ));
 
             $total = $query->count();
             $activities = $query->orderBy($column, $order)->offset($start)->limit($limit)->get();

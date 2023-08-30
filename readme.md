@@ -25,13 +25,17 @@ protected $recordEvents = [
 ];
 
 //If you want to save your custom activity log
-use Rajtika\Mongovity\Services\Mongovity;
+use Rajtika\Mongovity\Services\Mongovity; //Use this service
 
     app(Mongovity::class)
     ->by(Auth::user()) //Required *
     ->on(TestModel::find(1)) // optional
     ->event('created') // optional
     ->log('Your custom message');
+    
+    /** OR **/
+    use Rajtika\Mongovity\Facades\Mongovity; // use this facade
+    Mongovity::by(User::first())->log("Custom message");
 
 //If your user table has first_name and last_name you have to use this method to log the user name
 public function getNameAttribute()

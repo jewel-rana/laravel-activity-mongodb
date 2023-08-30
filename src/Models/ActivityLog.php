@@ -15,6 +15,8 @@ class ActivityLog extends Model
         'created_at' => 'datetime:Y-m-d H:i:s'
     ];
 
+    protected $dates = ['created_at'];
+
     public static function boot()
     {
         parent::boot();

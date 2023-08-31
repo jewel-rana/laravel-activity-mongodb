@@ -16,7 +16,7 @@ trait ActivityTrait
     {
         static::eventsToBeRecorded()->each(function ($eventName) {
             static::$eventName(function (Model $model) use ($eventName) {
-                if(!Auth::check()) {
+                if(Auth::check()) {
                     app(Mongovity::class)
                         ->by(Auth::user() ?? User::first())
                         ->on($model)
@@ -31,8 +31,8 @@ trait ActivityTrait
 
     public static function eventsToBeRecorded(): Collection
     {
-        if (property_exists(new static(), 'logEvents')) {
-            return static::$logEvents;
+        if (property_exists(new static(), 'recordEvents')) {
+            return static::$recordEvents;
         }
 
         $events = collect([

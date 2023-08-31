@@ -23,7 +23,7 @@ return [
     /**
      * Secure default mongovity route to see the logs
      */
-    'route_middleware' => env('MONGO_VITY_ROUTE_MIDDLEWARE', 'auth:web')
+    'route_middleware' => env('MONGO_VITY_ROUTE_MIDDLEWARE', 'auth')
 ];
 
 

@@ -41,8 +41,8 @@ class MongovityServiceProvider extends ServiceProvider
         ], 'config');
 
         $this->publishes([
-            __DIR__ . '/Resources/views' => 'resources/views/' . Mongovity::NAMESPACE,
-        ], 'views');
+            __DIR__ . '/Resources/views' => resource_path('views/vendor/' . Mongovity::NAMESPACE),
+        ]);
     }
 
     /**

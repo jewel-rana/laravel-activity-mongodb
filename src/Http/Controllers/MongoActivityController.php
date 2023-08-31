@@ -54,6 +54,6 @@ class MongoActivityController extends Controller
                 ]
             );
         }
-        return view(Mongovity::NAMESPACE . '::index');
+        return view(Mongovity::NAMESPACE . '::index')->with(['title' => 'Activity logs']);
     }
 }

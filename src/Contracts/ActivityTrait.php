@@ -35,6 +35,10 @@ trait ActivityTrait
             return static::$recordEvents;
         }
 
+        if (property_exists(new static(), 'loggableEvents')) {
+            return static::$loggableEvents;
+        }
+
         $events = collect([
             'created',
             'updated',

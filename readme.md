@@ -23,6 +23,13 @@ protected $recordEvents = [
     'deleted',
     'restored'
 ];
+/** -----------OR--------- **/
+protected $loggableEvents = [
+    'created',
+    'updated',
+    'deleted',
+    'restored'
+];
 
 //If you want to save your custom activity log
 use Rajtika\Mongovity\Services\Mongovity; //Use this service

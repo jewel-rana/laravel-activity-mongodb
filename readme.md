@@ -55,4 +55,6 @@ public function getMobileAttribute()
 {
     return $this->mobile_number;
 }
+
+If you want to give permission to activity log to any user, you must assing role "admin" or assign permission "activity_logs" to that user
 ```

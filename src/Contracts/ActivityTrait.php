@@ -25,8 +25,6 @@ trait ActivityTrait
                 }
             });
         });
-
-        Log::info((new static())->dispatchesEvents);
     }
 
     public static function eventsToBeRecorded(): Collection

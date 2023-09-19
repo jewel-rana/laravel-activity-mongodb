@@ -44,7 +44,13 @@ class MongoActivityController extends Controller
             ));
 
             $total = $query->count();
-            $activities = $query->orderBy($column, $order)->offset($start)->limit($limit)->get();
+            $activities = $query->orderBy($column, $order)
+                ->offset($start)
+                ->limit($limit)
+                ->get()
+                ->map(function($item, $key) {
+                    return $item->format();
+                });
             return response()->json(
                 [
                     'draw' => $request->get('draw'),

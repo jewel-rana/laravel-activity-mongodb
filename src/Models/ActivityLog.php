@@ -9,13 +9,30 @@ class ActivityLog extends Model
 {
     protected $connection = 'mongodb';
     protected $collection = 'activity_logs';
-    protected $fillable = ['causer_id', 'causer_type', 'causer_name', 'causer_mobile', 'subject_id', 'subject_type', 'message', 'data', 'ip', 'log_name'];
+    protected $fillable = [
+        'causer_id',
+        'causer_type',
+        'causer_name',
+        'causer_mobile',
+        'subject_id',
+        'subject_type',
+        'message',
+        'data',
+        'ip',
+        'log_name',
+        'created_at'
+    ];
 
     protected $casts = [
         'created_at' => 'datetime:Y-m-d H:i:s'
     ];
 
     protected $dates = ['created_at'];
+
+    public function format(): array
+    {
+        return $this->attributesToArray() + ['causer_mobile' => '', 'causer_name' => '', 'subject_id' => '', 'subject_type' => ''];
+    }
 
     public static function boot()
     {

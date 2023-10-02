@@ -48,7 +48,7 @@ class ActivityLog extends Model
                 $activityLog->data = $activityLog->data + [
                         'hosts' => [
                             'name' => gethostname(),
-                            'uri' => $_SERVER['REQUEST_URI']
+                            'uri' => $_SERVER['REQUEST_URI'] ?? null
                         ]
                     ];
             } catch (\Exception $exception) {

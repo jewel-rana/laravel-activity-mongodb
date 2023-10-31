@@ -24,7 +24,7 @@ class ActivityLog extends Model
     ];
 
     protected $casts = [
-        'created_at' => 'datetime:Y-m-d H:i:s'
+        'created_at' => 'datetime:d/m/Y H:i:s'
     ];
 
     protected $dates = ['created_at'];

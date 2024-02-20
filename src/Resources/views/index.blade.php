@@ -120,14 +120,14 @@
     $('div#dataTable_filter').append('<span id="reportrange"style="width: 220px;background: #fff; cursor: pointer; padding: 6px 10px; border: 1px solid #ccc; width: 100%"> <i class="fa fa-calendar"></i>&nbsp; <span></span> <i class="fa fa-caret-down"></i> </span>');
 
     cb(start, end);
-    let modal = $('#myModal');
+        let myModal = $('#myModal');
     $('table').on('click', '.activity', function () {
-        let modalBody = $(modal).find('#modalBody');
+        let modalBody = $(myModal).find('#modalBody');
         let attr = $(this).data('attr');
         $(modalBody).html("<pre>" + JSON.stringify(attr, null, 4) + "</pre>");
-        $(modal).modal("show");
+        $(myModal).modal("show");
     });
-    $(modal).on('hidden.bs.modal', function () {
+    $(myModal).on('hidden.bs.modal', function () {
         $('#myModal #modalBody').html('');
     });
 

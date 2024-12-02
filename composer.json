@@ -3,7 +3,7 @@
     "description": "Application activity log with mongodb",
     "type": "library",
     "require": {
-        "jenssegers/mongodb": "^3.8"
+        "jenssegers/mongodb": "^3"
     },
     "license": "MIT",
     "autoload": {

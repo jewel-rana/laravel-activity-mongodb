@@ -76,7 +76,9 @@ class Mongovity
             ])
                 ->create($this->getData($message));
         } catch (\Exception $exception) {
-            Log::info($exception->getMessage());
+            Log::info($exception->getMessage(), [
+                'keyword' => 'MONGOVITY_EXCEPTION',
+            ]);
         }
     }
 

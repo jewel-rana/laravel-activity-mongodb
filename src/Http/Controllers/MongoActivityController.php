@@ -34,16 +34,20 @@ class MongoActivityController extends Controller
                 }
             }
 
-            $startDate = $request->input('date_from') ?? now()->format('Y-m-d');
-            $endDate = $request->input('date_to') ?? now()->format('Y-m-d');
+            $startDate = $request->input('date_from');
+            $endDate = $request->input('date_to');
 
-            $query->whereBetween(
-                'created_at', array(
-                Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay(),
-                Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay()
-            ));
+            if ($startDate && $endDate) {
+                $from = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
+                $to = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
 
-            $total = $query->count();
+                $query->where(function ($q) use ($from, $to) {
+                    $q->whereBetween('created_at', [$from, $to])
+                        ->orWhereNull('created_at');
+                });
+            }
+
+            $total = (clone $query)->count();
             $activities = $query->orderBy($column, $order)
                 ->offset($start)
                 ->limit($limit)

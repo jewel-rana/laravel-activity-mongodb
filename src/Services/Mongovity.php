@@ -6,7 +6,6 @@ use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Traits\Macroable;
 use Rajtika\Mongovity\Models\ActivityLog;
@@ -30,11 +29,7 @@ class Mongovity
 
     public function get($limit = 15): LengthAwarePaginator
     {
-        return App::make(ActivityLog::class, [
-            'collection_name' => config('mongovity.collection_name', 'activity_logs'),
-            'connection' => config('mongovity.connection_name', 'mongodb')
-        ])
-            ->latest()->paginate($limit);
+        return ActivityLog::query()->latest('created_at')->paginate($limit);
     }
 
     public function by(Model $causedBy): Mongovity
@@ -70,11 +65,7 @@ class Mongovity
     public function log($message = null): void
     {
         try {
-            App::make(ActivityLog::class, [
-                'collection_name' => config('mongovity.collection_name', 'activity_logs'),
-                'connection' => config('mongovity.connection_name', 'mongodb')
-            ])
-                ->create($this->getData($message));
+            ActivityLog::query()->create($this->getData($message));
         } catch (\Exception $exception) {
             Log::info($exception->getMessage(), [
                 'keyword' => 'MONGOVITY_EXCEPTION',
@@ -94,7 +85,8 @@ class Mongovity
             'message' => $message ?? $this->getDefaultMessage(),
             'data' => $this->getAttr(),
             'log_name' => config('mongovity.log_name'),
-            'ip' => $this->ip ?? request()->ip()
+            'ip' => $this->ip ?? request()->ip(),
+            'created_at' => now(),
         ];
     }
 

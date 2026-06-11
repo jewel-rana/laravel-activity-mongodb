@@ -140,3 +140,44 @@ To access the built-in activity log UI, assign the `admin` role or the `activity
 | `log_name` | Application log identifier | `APP_NAME` |
 | `route_middleware` | Middleware for mongovity routes | `['web', 'auth']` |
 | `index_route_middleware` | Permission middleware for the log UI | `role_or_permission:admin\|activity_logs` |
+| `layout` | App layout view for embedding the log page | `null` (standalone page) |
+| `content_section` | Blade section for page content | `content` |
+| `styles_stack` | Blade stack for page styles | `styles` |
+| `scripts_stack` | Blade stack for page scripts | `scripts` |
+| `skip_daterangepicker_assets` | Skip Moment.js / DateRangePicker CDN assets | `false` |
+
+### Avoid jQuery / DataTables conflicts
+
+By default, the log page renders as a standalone HTML page with its own CDN assets. That can break your application dropdowns and plugins when the page is opened inside your app.
+
+Set your application layout in `config/mongovity.php`:
+
+```php
+'layout' => 'layouts.app',
+'content_section' => 'content',
+'styles_stack' => 'styles',
+'scripts_stack' => 'scripts',
+```
+
+Your layout must already load:
+
+- jQuery
+- Bootstrap (v4 or v5)
+- DataTables
+- Moment.js and DateRangePicker (or leave `skip_daterangepicker_assets` as `false`)
+
+Example in your layout:
+
+```blade
+@stack('styles')
+...
+@yield('content')
+...
+@stack('scripts')
+```
+
+Publish and customize the view if your stack names differ:
+
+```bash
+php artisan vendor:publish --tag=mongovity-views
+```

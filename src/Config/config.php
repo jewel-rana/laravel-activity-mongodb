@@ -37,6 +37,25 @@ return [
         'MONGO_VITY_INDEX_MIDDLEWARE',
         'role_or_permission:admin|activity_logs'
     ),
+
+    /**
+     * Application layout used by the activity log page.
+     * Set this to your app layout (e.g. layouts.app) to avoid loading
+     * duplicate jQuery, Bootstrap, and DataTables assets.
+     */
+    'layout' => env('MONGO_VITY_LAYOUT'),
+
+    /**
+     * Blade section / stack names used when embedding in the application layout.
+     */
+    'content_section' => env('MONGO_VITY_CONTENT_SECTION', 'content'),
+    'styles_stack' => env('MONGO_VITY_STYLES_STACK', 'styles'),
+    'scripts_stack' => env('MONGO_VITY_SCRIPTS_STACK', 'scripts'),
+
+    /**
+     * Skip loading Moment.js and DateRangePicker assets when your app already provides them.
+     */
+    'skip_daterangepicker_assets' => env('MONGO_VITY_SKIP_DATERANGEPICKER_ASSETS', false),
 ];
 
 

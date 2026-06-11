@@ -3,7 +3,9 @@
     "description": "Application activity log with mongodb",
     "type": "library",
     "require": {
-        "jenssegers/mongodb": "^3"
+        "php": "^8.4",
+        "illuminate/support": "^12.0",
+        "mongodb/laravel-mongodb": "^5.2"
     },
     "license": "MIT",
     "autoload": {
@@ -20,5 +22,15 @@
             "email": "jewelrana.dev@gmail.com"
         }
     ],
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Rajtika\\Mongovity\\MongovityServiceProvider"
+            ],
+            "aliases": {
+                "Mongovity": "Rajtika\\Mongovity\\Facades\\Mongovity"
+            }
+        }
+    }
 }

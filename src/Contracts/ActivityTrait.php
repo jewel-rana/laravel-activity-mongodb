@@ -2,7 +2,6 @@
 
 namespace Rajtika\Mongovity\Contracts;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
@@ -16,13 +15,21 @@ trait ActivityTrait
     {
         static::eventsToBeRecorded()->each(function ($eventName) {
             static::$eventName(function (Model $model) use ($eventName) {
-                if(Auth::check()) {
-                    app(Mongovity::class)
-                        ->by(Auth::user() ?? User::first())
-                        ->on($model)
-                        ->event($eventName)
-                        ->log();
+                if (! Auth::check()) {
+                    return;
                 }
+
+                $causer = Auth::user() ?? config('mongovity.causer_model')::query()->first();
+
+                if (! $causer) {
+                    return;
+                }
+
+                app(Mongovity::class)
+                    ->by($causer)
+                    ->on($model)
+                    ->event($eventName)
+                    ->log();
             });
         });
     }

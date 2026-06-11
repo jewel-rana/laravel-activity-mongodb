@@ -3,12 +3,16 @@
 namespace Rajtika\Mongovity\Models;
 
 use Illuminate\Support\Facades\Log;
-use Jenssegers\Mongodb\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 
 class ActivityLog extends Model
 {
     protected $connection = 'mongodb';
+
     protected $collection = 'activity_logs';
+
+    public $timestamps = false;
+
     protected $fillable = [
         'causer_id',
         'causer_type',
@@ -20,37 +24,40 @@ class ActivityLog extends Model
         'data',
         'ip',
         'log_name',
-        'created_at'
+        'created_at',
     ];
 
     protected $casts = [
-        'created_at' => 'datetime:d/m/Y H:i:s'
+        'data' => 'array',
+        'created_at' => 'datetime:d/m/Y H:i:s',
     ];
-
-    protected $dates = ['created_at'];
 
     public function format(): array
     {
-        return $this->attributesToArray() + ['causer_mobile' => '', 'causer_name' => '', 'subject_id' => '', 'subject_type' => ''];
+        return $this->attributesToArray() + [
+            'causer_mobile' => '',
+            'causer_name' => '',
+            'subject_id' => '',
+            'subject_type' => '',
+        ];
     }
 
-    public static function boot()
+    protected static function booted(): void
     {
-        parent::boot();
         static::creating(function (ActivityLog $activityLog) {
             try {
-                if (!$activityLog->ip) {
+                if (! $activityLog->ip) {
                     $activityLog->ip = request()->ip();
                 }
-                if (!$activityLog->log_name) {
+                if (! $activityLog->log_name) {
                     $activityLog->log_name = config('mongovity.log_name', 'default');
                 }
-                $activityLog->data = $activityLog->data + [
-                        'hosts' => [
-                            'name' => gethostname(),
-                            'uri' => $_SERVER['REQUEST_URI'] ?? null
-                        ]
-                    ];
+                $activityLog->data = ($activityLog->data ?? []) + [
+                    'hosts' => [
+                        'name' => gethostname(),
+                        'uri' => $_SERVER['REQUEST_URI'] ?? null,
+                    ],
+                ];
             } catch (\Exception $exception) {
                 Log::error($exception);
             }

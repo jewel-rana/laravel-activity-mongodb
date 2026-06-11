@@ -4,20 +4,17 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 use Rajtika\Mongovity\Constants\Mongovity;
 
-class CreateActivityLogsTable extends Migration
+return new class extends Migration
 {
     protected $connection = 'mongodb';
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+
     public function up(): void
     {
-        if(!Schema::connection($this->connection)
-            ->hasTable('activity_logs')) {
+        $collection = config(Mongovity::NAMESPACE . '.collection_name', 'activity_logs');
+
+        if (! Schema::connection($this->connection)->hasTable($collection)) {
             Schema::connection($this->connection)
-                ->create(config('collection_name', 'activity_logs'), function ($collection) {
+                ->create($collection, function ($collection) {
                     $collection->index('causer_id')->comment('Occurrence by');
                     $collection->string('causer_type');
                     $collection->string('causer_name');
@@ -32,14 +29,9 @@ class CreateActivityLogsTable extends Migration
         }
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down(): void
     {
         Schema::connection(config(Mongovity::NAMESPACE . '.connection_name', 'mongodb'))
-            ->dropIfExists('activity_logs');
+            ->dropIfExists(config(Mongovity::NAMESPACE . '.collection_name', 'activity_logs'));
     }
-}
+};

@@ -10,6 +10,11 @@ return [
     'connection_name' => env('MONGO_VITY_CONNECTION', 'mongodb'),
 
     /**
+     * MongoDB collection name for activity logs
+     */
+    'collection_name' => env('MONGO_VITY_COLLECTION', 'activity_logs'),
+
+    /**
      * This model will be use as causer type references
      */
     'causer_model' => \App\Models\User::class,
@@ -21,9 +26,17 @@ return [
     'log_name' => env("APP_NAME", 'default'),
 
     /**
-     * Secure default mongovity route to see the logs
+     * Middleware applied to all mongovity routes
      */
-    'route_middleware' => env('MONGO_VITY_ROUTE_MIDDLEWARE', 'auth')
+    'route_middleware' => ['web', 'auth'],
+
+    /**
+     * Additional middleware for the activity log index route
+     */
+    'index_route_middleware' => env(
+        'MONGO_VITY_INDEX_MIDDLEWARE',
+        'role_or_permission:admin|activity_logs'
+    ),
 ];
 
 

@@ -147,6 +147,6 @@ class Mongovity
             'created_at',
             'updated_at',
             'deleted_at'
-        ] + (array) $this->model->excludedFields ?? [];
+        ] + (array) ($this->model->excludedFields ?? []);
     }
 }

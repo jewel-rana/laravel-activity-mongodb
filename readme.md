@@ -60,6 +60,21 @@ php artisan vendor:publish --tag=mongovity-config
 // Add ActivityTrait to the model you want to log
 use Rajtika\Mongovity\Contracts\ActivityTrait;
 
+// Log only specific attributes
+protected static $logAttributes = ['name', 'email', 'status'];
+
+// Or log fillable / all non-guarded attributes (for $guarded-only models)
+protected static $logFillable = true;
+
+// Skip logging when nothing changed on update
+protected static $logOnlyDirty = true;
+
+// Custom log message per event
+public function getDescriptionForEvent(string $eventName): string
+{
+    return "MyModel {$eventName}";
+}
+
 // You can define specific events to be logged
 protected $recordEvents = [
     'created',
@@ -109,6 +124,11 @@ public function getMobileAttribute()
 ```
 
 To access the built-in activity log UI, assign the `admin` role or the `activity_logs` permission to the user (when using Spatie Laravel Permission).
+
+## Notes
+
+- Activity logging requires an authenticated user (`Auth::check()`).
+- Use Eloquent `save()` / instance `update()` on a model. Mass updates such as `Model::where()->update()` do not fire model events and will not be logged.
 
 ## Configuration
 

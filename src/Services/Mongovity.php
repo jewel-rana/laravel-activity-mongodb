@@ -16,10 +16,15 @@ class Mongovity
     use Macroable;
 
     private ?Model $model = null;
+
     private ?string $event = null;
+
     private AuthManager $auth;
+
     private array $attributes = [];
+
     private ?Model $causedBy = null;
+
     private ?string $ip;
 
     public function __construct(AuthManager $auth)
@@ -35,30 +40,35 @@ class Mongovity
     public function by(Model $causedBy): Mongovity
     {
         $this->causedBy = $causedBy;
+
         return $this;
     }
 
     public function on(Model $performedOn): Mongovity
     {
         $this->model = $performedOn;
+
         return $this;
     }
 
     public function event($eventName = null): Mongovity
     {
         $this->event = $eventName;
+
         return $this;
     }
 
     public function attr(array $attributes = []): Mongovity
     {
         $this->attributes = $attributes;
+
         return $this;
     }
 
     public function ip(string $ip): Mongovity
     {
         $this->ip = $ip;
+
         return $this;
     }
 
@@ -102,34 +112,82 @@ class Mongovity
 
     private function getDefaultMessage()
     {
-        return $this->model->defaultLogMessage ?? ucfirst($this->event) . " " . (new ReflectionClass($this->model))->getShortName();
+        if ($this->model && method_exists($this->model, 'getDescriptionForEvent') && $this->event) {
+            return $this->model->getDescriptionForEvent($this->event);
+        }
+
+        return $this->model->defaultLogMessage ?? ucfirst((string) $this->event).' '.(new ReflectionClass($this->model))->getShortName();
     }
 
     private function getAttr(): array
     {
         $attr = [];
-        if($this->event) {
+        $fields = $this->resolvedLogFields();
+
+        if ($this->event) {
             $attr['attributes'] = Arr::except(
                 Arr::only(
                     $this->model->getAttributes() ?? $this->model->getDirty(),
-                    $this->model->getFillable() ?? []
+                    $fields
                 ),
                 $this->excepts()
             );
-            if($this->event === 'updated') {
+            if ($this->event === 'updated') {
                 $attr['attributes'] = Arr::except(
                     Arr::only(
                         $this->model->getRawOriginal(),
-                        $this->model->getFillable() ?? []
+                        $fields
                     ),
                     $this->excepts()
                 );
-                $attr['changes'] = Arr::except($this->model->getChanges(), $this->excepts());
+                $attr['changes'] = Arr::except(
+                    Arr::only($this->model->getChanges(), $fields),
+                    $this->excepts()
+                );
             }
         } else {
             $attr['custom'] = $this->attributes;
         }
+
         return $attr;
+    }
+
+    private function resolvedLogFields(): array
+    {
+        $model = $this->model;
+        $reflection = new ReflectionClass($model);
+
+        if ($reflection->hasProperty('logAttributes')) {
+            $property = $reflection->getProperty('logAttributes');
+            $property->setAccessible(true);
+            $logAttributes = $property->getValue();
+
+            if (! empty($logAttributes)) {
+                return $logAttributes;
+            }
+        }
+
+        if ($reflection->hasProperty('logFillable')) {
+            $property = $reflection->getProperty('logFillable');
+            $property->setAccessible(true);
+
+            if ($property->getValue()) {
+                $fillable = $model->getFillable();
+                if ($fillable !== []) {
+                    return $fillable;
+                }
+
+                $guarded = $model->getGuarded();
+                if ($guarded !== ['*']) {
+                    return array_keys(array_diff_key(
+                        $model->getAttributes(),
+                        array_flip($guarded)
+                    ));
+                }
+            }
+        }
+
+        return $model->getFillable() ?? [];
     }
 
     private function excepts(): array
@@ -138,7 +196,7 @@ class Mongovity
             'password',
             'created_at',
             'updated_at',
-            'deleted_at'
+            'deleted_at',
         ] + (array) ($this->model->excludedFields ?? []);
     }
 }

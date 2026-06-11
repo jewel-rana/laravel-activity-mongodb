@@ -48,7 +48,7 @@ No changes are required to your mongovity usage (`ActivityTrait`, `Mongovity` se
 
 ```bash
 composer require rajtika/mongovity
-php artisan vendor:publish --provider="Rajtika\Mongovity\MongovityServiceProvider"
+php artisan vendor:publish --tag=mongovity-config
 ```
 
 ## Implementation

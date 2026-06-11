@@ -1,57 +1,37 @@
 <?php
+
 namespace Rajtika\Mongovity;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\ServiceProvider;
 use Rajtika\Mongovity\Constants\Mongovity;
-use Rajtika\Mongovity\Http\Controllers\MongoActivityController;
 
 class MongovityServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     *
-     * @return void
-     * @throws BindingResolutionException
-     */
     public function register(): void
     {
-        //Register Controllers
-        $this->app->make(MongoActivityController::class);
+        $this->mergeConfigFrom(__DIR__ . '/Config/config.php', Mongovity::NAMESPACE);
 
-        //Register Routes
         $this->loadRoutesFrom(__DIR__ . '/Routes/web.php');
 
-        //Load Configs
-        $this->mergeConfigFrom(__DIR__ . '/Config/config.php', Constants\Mongovity::NAMESPACE);
+        $this->loadViewsFrom(__DIR__ . '/Resources/views', Mongovity::NAMESPACE);
 
-        //Load Views
-        $this->loadViewsFrom(__DIR__.'/Resources/views', Constants\Mongovity::NAMESPACE);
-
-        //Load Migrations
         $this->loadMigrationsFrom(__DIR__ . '/Migrations');
-
-        //publishes migration
-        $this->publishes([
-            __DIR__.'/Migrations/' => database_path('migrations')
-        ], 'migrations');
-
-        $this->publishes([
-            __DIR__ . '/Config/config.php' => config_path(Mongovity::NAMESPACE . '.php'),
-        ], 'config');
-
-        $this->publishes([
-            __DIR__ . '/Resources/views' => resource_path('views/vendor/' . Mongovity::NAMESPACE),
-        ]);
     }
 
-    /**
-     * Bootstrap services.
-     *
-     * @return void
-     */
     public function boot(): void
     {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/Config/config.php' => config_path(Mongovity::NAMESPACE . '.php'),
+            ], ['mongovity-config', 'config']);
 
+            $this->publishes([
+                __DIR__ . '/Migrations/' => database_path('migrations'),
+            ], ['mongovity-migrations', 'migrations']);
+
+            $this->publishes([
+                __DIR__ . '/Resources/views' => resource_path('views/vendor/' . Mongovity::NAMESPACE),
+            ], 'mongovity-views');
+        }
     }
 }
